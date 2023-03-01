@@ -1,6 +1,9 @@
 
 package View;
 
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
 public class Register extends javax.swing.JPanel {
 
     public Frame frame;
@@ -97,9 +100,14 @@ public class Register extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
-        frame.registerAction(usernameFld.getText(), passwordFld.getText(), confpassFld.getText());
+        String user = usernameFld.getText();
+        String pass = passwordFld.getText();
+        String confpass = confpassFld.getText();
         
-        frame.loginNav();
+        if (validRegister(user, pass, confpass)) {
+            frame.registerAction(user, pass, confpass);
+            frame.loginNav();
+        }
     }//GEN-LAST:event_registerBtnActionPerformed
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
@@ -115,4 +123,86 @@ public class Register extends javax.swing.JPanel {
     private javax.swing.JButton registerBtn;
     private javax.swing.JTextField usernameFld;
     // End of variables declaration//GEN-END:variables
+    
+    /**
+     * Method to check if registration details are valid or not.
+     * @param user
+     * @param pass
+     * @param confpass
+     * @return Boolean
+     */
+    private static boolean validRegister(String user, String pass, String confpass){
+        boolean validRegister = true;
+        // MP NUMBER 10 - password and confirm password match
+        if (!pass.equals(confpass)) {
+            String errorMessage = "Those passwords don't match. Try again.";
+            JOptionPane.showMessageDialog(new JFrame(), errorMessage, "Invalid Registration Details", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        // MP NUMBER 11 - username is not same as password
+        if (pass.equals(user)) {
+            String errorMessage = "Username cannot be the same as password. Try again.";
+            JOptionPane.showMessageDialog(new JFrame(), errorMessage, "Invalid Registration Details", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+            
+        // MP NUMBER 5 - password greater than 8 characters
+        if (pass.length() < 8) {
+            String errorMessage = "Password must be greater than 8 characters";
+            JOptionPane.showMessageDialog(new JFrame(), errorMessage, "Invalid Registration Details", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        // MP NUMBER 6 - password lesser than 64 characters N
+        else if (pass.length() > 64) {
+            String errorMessage = "Password must be lesser than 64 characters";
+            JOptionPane.showMessageDialog(new JFrame(), errorMessage, "Invalid Registration Details", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        // MP NUMBER 15, 16, 19, 20
+        if (!isValidPassword(pass)) return false;
+        return validRegister;
+    }
+    
+    /**
+     * Reference: Java2Blog. "Validate password in java".
+     * Method to check if password is valid or not.
+     * @param password
+     * @return Boolean
+     */
+    public static boolean isValidPassword(String password)
+    {
+            boolean isValid = true;
+            String upperCaseChars = "(.*[A-Z].*)";
+            String lowerCaseChars = "(.*[a-z].*)";
+            String numbers = "(.*[0-9].*)";
+            String specialChars = "(.*[@,#,$,%].*$)";
+            if (!password.matches(upperCaseChars ))
+            {
+                String errorMessage = "Password must have atleast one uppercase character";
+                JOptionPane.showMessageDialog(new JFrame(), errorMessage, "Invalid Registration Details", JOptionPane.ERROR_MESSAGE);
+                isValid = false;
+            }
+            else if (!password.matches(lowerCaseChars ))
+            {
+                String errorMessage = "Password must have atleast one lowercase character";
+                JOptionPane.showMessageDialog(new JFrame(), errorMessage, "Invalid Registration Details", JOptionPane.ERROR_MESSAGE);
+                isValid = false;
+            }
+            else if (!password.matches(numbers ))
+            {
+                String errorMessage = "Password must have atleast one number";
+                JOptionPane.showMessageDialog(new JFrame(), errorMessage, "Invalid Registration Details", JOptionPane.ERROR_MESSAGE);
+                isValid = false;
+            }
+            else if (!password.matches(specialChars ))
+            {
+                String errorMessage = "Password must have atleast one special character among @#$%";
+                JOptionPane.showMessageDialog(new JFrame(), errorMessage, "Invalid Registration Details", JOptionPane.ERROR_MESSAGE);
+                isValid = false;
+            }
+            return isValid; 
+    }
 }
