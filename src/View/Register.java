@@ -1,8 +1,11 @@
 
 package View;
 
-import Model.User;
-import java.util.ArrayList;
+import Model.PasswordHash;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -15,7 +18,7 @@ public class Register extends javax.swing.JPanel {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         registerBtn = new javax.swing.JButton();
@@ -99,36 +102,38 @@ public class Register extends javax.swing.JPanel {
                 .addComponent(registerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(64, Short.MAX_VALUE))
         );
-    }// </editor-fold>                        
+    }// </editor-fold>//GEN-END:initComponents
 
-    private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        
+    private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
         String user = usernameFld.getText();
         String pass = passwordFld.getText();
         String confpass = confpassFld.getText();
         
-        if (validRegister(user, pass, confpass, frame)) {
-            frame.registerAction(user, pass, confpass);
-            frame.loginNav();
-            usernameFld.setText("");
-            passwordFld.setText("");
-            confpassFld.setText("");
+        if (validRegister(user, pass, confpass)) {
+            try {
+                // MP NUMBER 18 - cryptographic technique
+                String passHash = PasswordHash.createHash(pass);
+                frame.registerAction(user, passHash, confpass); // confpass not used in registerAction()
+                frame.loginNav();
+            } catch(Exception ex) {
+                System.out.println("ERROR: " + ex);
+            }
         }
-    }                                           
+    }//GEN-LAST:event_registerBtnActionPerformed
 
-    private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {                                        
+    private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
         frame.loginNav();
-    }                                       
+    }//GEN-LAST:event_backBtnActionPerformed
 
 
-    // Variables declaration - do not modify                     
+    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backBtn;
     private javax.swing.JTextField confpassFld;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField passwordFld;
     private javax.swing.JButton registerBtn;
     private javax.swing.JTextField usernameFld;
-    // End of variables declaration                   
+    // End of variables declaration//GEN-END:variables
     
     /**
      * Method to check if registration details are valid or not.
@@ -137,7 +142,7 @@ public class Register extends javax.swing.JPanel {
      * @param confpass
      * @return Boolean
      */
-    private static boolean validRegister(String user, String pass, String confpass, Frame frame){
+    private static boolean validRegister(String user, String pass, String confpass){
         boolean validRegister = true;
         // MP NUMBER 10 - password and confirm password match
         if (!pass.equals(confpass)) {
@@ -169,11 +174,6 @@ public class Register extends javax.swing.JPanel {
         
         // MP NUMBER 15, 16, 19, 20
         if (!isValidPassword(pass)) return false;
-        // MP NUMBER 13
-        if (isUserExists(user, frame)) {
-            JOptionPane.showMessageDialog(new JFrame(), "Invalid Registration", "Invalid Registration Details", JOptionPane.ERROR_MESSAGE);
-            return false;
-        } 
         return validRegister;
     }
     
@@ -215,17 +215,5 @@ public class Register extends javax.swing.JPanel {
                 isValid = false;
             }
             return isValid; 
-    }
-    
-    private static boolean isUserExists(String username, Frame frame){
-        ArrayList<User> userList = frame.main.sqlite.getUsers();
-        int size = userList.size();
-        for(int i = 0; i < size; i++){
-            if (userList.get(i).getUsername().toLowerCase().equals(username.toLowerCase())){
-                    //JOptionPane.showMessageDialog(null, "User was found in database", "Incorrect Credentials");
-                return true;
-            }
-        }
-        return false;
     }
 }
