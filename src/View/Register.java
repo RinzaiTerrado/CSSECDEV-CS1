@@ -1,6 +1,8 @@
 
 package View;
 
+import Model.User;
+import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -13,7 +15,7 @@ public class Register extends javax.swing.JPanel {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
         registerBtn = new javax.swing.JButton();
@@ -97,32 +99,36 @@ public class Register extends javax.swing.JPanel {
                 .addComponent(registerBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(64, Short.MAX_VALUE))
         );
-    }// </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>                        
 
-    private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
+    private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {                                            
+        
         String user = usernameFld.getText();
         String pass = passwordFld.getText();
         String confpass = confpassFld.getText();
         
-        if (validRegister(user, pass, confpass)) {
+        if (validRegister(user, pass, confpass, frame)) {
             frame.registerAction(user, pass, confpass);
             frame.loginNav();
+            usernameFld.setText("");
+            passwordFld.setText("");
+            confpassFld.setText("");
         }
-    }//GEN-LAST:event_registerBtnActionPerformed
+    }                                           
 
-    private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
+    private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {                                        
         frame.loginNav();
-    }//GEN-LAST:event_backBtnActionPerformed
+    }                                       
 
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify                     
     private javax.swing.JButton backBtn;
     private javax.swing.JTextField confpassFld;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField passwordFld;
     private javax.swing.JButton registerBtn;
     private javax.swing.JTextField usernameFld;
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration                   
     
     /**
      * Method to check if registration details are valid or not.
@@ -131,7 +137,7 @@ public class Register extends javax.swing.JPanel {
      * @param confpass
      * @return Boolean
      */
-    private static boolean validRegister(String user, String pass, String confpass){
+    private static boolean validRegister(String user, String pass, String confpass, Frame frame){
         boolean validRegister = true;
         // MP NUMBER 10 - password and confirm password match
         if (!pass.equals(confpass)) {
@@ -163,6 +169,11 @@ public class Register extends javax.swing.JPanel {
         
         // MP NUMBER 15, 16, 19, 20
         if (!isValidPassword(pass)) return false;
+        // MP NUMBER 13
+        if (isUserExists(user, frame)) {
+            JOptionPane.showMessageDialog(new JFrame(), "Invalid Registration", "Invalid Registration Details", JOptionPane.ERROR_MESSAGE);
+            return false;
+        } 
         return validRegister;
     }
     
@@ -204,5 +215,17 @@ public class Register extends javax.swing.JPanel {
                 isValid = false;
             }
             return isValid; 
+    }
+    
+    private static boolean isUserExists(String username, Frame frame){
+        ArrayList<User> userList = frame.main.sqlite.getUsers();
+        int size = userList.size();
+        for(int i = 0; i < size; i++){
+            if (userList.get(i).getUsername().toLowerCase().equals(username.toLowerCase())){
+                    //JOptionPane.showMessageDialog(null, "User was found in database", "Incorrect Credentials");
+                return true;
+            }
+        }
+        return false;
     }
 }
