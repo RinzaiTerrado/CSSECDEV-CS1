@@ -1,8 +1,8 @@
-
 package View;
-import javax.swing.JOptionPane;
 import Model.User;
 import java.util.ArrayList;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class Login extends javax.swing.JPanel {
 
@@ -13,7 +13,7 @@ public class Login extends javax.swing.JPanel {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
@@ -84,67 +84,61 @@ public class Login extends javax.swing.JPanel {
                     .addComponent(loginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(126, Short.MAX_VALUE))
         );
-    }// </editor-fold>                        
-    private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        //CODE FOR CHECKING DATABASE IF USER EXISTS
-        User loguser = new User(usernameFld.getText(), passwordFld.getText());
-        
-        //checks if one of the fields is blank
-        if(usernameFld.getText().isBlank() || passwordFld.getText().isBlank()){
-            //generic error message
-            JOptionPane.showMessageDialog(null, "One or both of the fields are Empty", "Empty Field",JOptionPane.ERROR_MESSAGE);
-        
-        } else {    
-            
-            if(userExists(usernameFld.getText(), passwordFld.getText()) ){ //is found in database
-                //if username is database
-                    //Success
-                    //clear fields
-                    usernameFld.setText("");
-                    passwordFld.setText("");
-                    frame.mainNav();
-
-            }else { //generic error message
-                    JOptionPane.showMessageDialog(null, "Username or Password is incorrect", "Incorrect Credentials",JOptionPane.ERROR_MESSAGE);
-
-            }
-            
-        
+    }// </editor-fold>//GEN-END:initComponents
+    private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
+        // retrieve username and password, check if there is a match in database.
+        String user = usernameFld.getText();
+        String pass = passwordFld.getText();
+        if (validLogin(user, pass, frame)) {
+            usernameFld.setText("");
+            passwordFld.setText("");
+            frame.mainNav();
         }
-        
-    }                                        
+    }//GEN-LAST:event_loginBtnActionPerformed
 
-    private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        
-        //clear fields
+    private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
         usernameFld.setText("");
         passwordFld.setText("");
         frame.registerNav();
-    }                                           
-    
+    }//GEN-LAST:event_registerBtnActionPerformed
 
-    // Variables declaration - do not modify                     
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JButton loginBtn;
     private javax.swing.JTextField passwordFld;
     private javax.swing.JButton registerBtn;
     private javax.swing.JTextField usernameFld;
-    // End of variables declaration                   
+    // End of variables declaration//GEN-END:variables
 
-    private boolean userExists(String username, String password){
+    private static boolean validLogin (String user, String pass, Frame frame) {
+        boolean isValidLogin = false;
+        // check username
+        // MP NUMBER 21 - check empty fields
+        if (user.isEmpty() || pass.isEmpty()) {
+            String errorMessage = "One of the fields are empty. Try again.";
+            JOptionPane.showMessageDialog(new JFrame(), errorMessage, "Invalid Login", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
         ArrayList<User> userList = frame.main.sqlite.getUsers();
-        int size = userList.size();
-        for(int i = 0; i < size; i++){
-            if (userList.get(i).getUsername().toLowerCase().equals(username.toLowerCase())){
-                    //JOptionPane.showMessageDialog(null, "User was found in database", "Incorrect Credentials");
-                if (userList.get(i).getPassword().equals(password)){ //add cryptography function
-              
-                    return true;
+        
+        // go through entire SQLite user list and set isValidLogin to true if fouund.
+        // implementation not vulnerable to time-based attack because processing time -- 
+        // -- is similar for success cases and failure cases
+        for (User userDB : userList) {
+            // MP NUBER 23 - check username (case-insensitive) 
+            // MP NUMBER 1 - check if username exist in database
+            if (user.equalsIgnoreCase(userDB.getUsername())) {
+                // MP NUMBER 2 - check if password exist in database (given username exists)
+                if (pass.equals(userDB.getPassword())) {
+                    isValidLogin = true;
                 }
             }
-                
-            
         }
-        return false;
+        if (!isValidLogin) {
+            String errorMessage = "The user ID or password was incorrect.";
+            JOptionPane.showMessageDialog(new JFrame(), errorMessage, "Invalid Login", JOptionPane.ERROR_MESSAGE);
+        }
+        return isValidLogin;
     }
 }
