@@ -1,6 +1,8 @@
 
 package View;
 import javax.swing.JOptionPane;
+import Model.User;
+import java.util.ArrayList;
 
 public class Login extends javax.swing.JPanel {
 
@@ -11,7 +13,7 @@ public class Login extends javax.swing.JPanel {
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
@@ -82,30 +84,67 @@ public class Login extends javax.swing.JPanel {
                     .addComponent(loginBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(126, Short.MAX_VALUE))
         );
-    }// </editor-fold>//GEN-END:initComponents
-    private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginBtnActionPerformed
+    }// </editor-fold>                        
+    private void loginBtnActionPerformed(java.awt.event.ActionEvent evt) {                                         
         //CODE FOR CHECKING DATABASE IF USER EXISTS
-        //clear fields
-        usernameFld.setText("");
-        passwordFld.setText("");
-        frame.mainNav();
-    }//GEN-LAST:event_loginBtnActionPerformed
+        User loguser = new User(usernameFld.getText(), passwordFld.getText());
+        
+        //checks if one of the fields is blank
+        if(usernameFld.getText().isBlank() || passwordFld.getText().isBlank()){
+            //generic error message
+            JOptionPane.showMessageDialog(null, "One or both of the fields are Empty", "Empty Field",JOptionPane.ERROR_MESSAGE);
+        
+        } else {    
+            
+            if(userExists(usernameFld.getText(), passwordFld.getText()) ){ //is found in database
+                //if username is database
+                    //Success
+                    //clear fields
+                    usernameFld.setText("");
+                    passwordFld.setText("");
+                    frame.mainNav();
 
-    private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registerBtnActionPerformed
+            }else { //generic error message
+                    JOptionPane.showMessageDialog(null, "Username or Password is incorrect", "Incorrect Credentials",JOptionPane.ERROR_MESSAGE);
+
+            }
+            
+        
+        }
+        
+    }                                        
+
+    private void registerBtnActionPerformed(java.awt.event.ActionEvent evt) {                                            
         
         //clear fields
         usernameFld.setText("");
         passwordFld.setText("");
-        JOptionPane.showMessageDialog(null, "Error", "Error was found",JOptionPane.ERROR_MESSAGE);
         frame.registerNav();
-    }//GEN-LAST:event_registerBtnActionPerformed
+    }                                           
+    
 
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify                     
     private javax.swing.JLabel jLabel1;
     private javax.swing.JButton loginBtn;
     private javax.swing.JTextField passwordFld;
     private javax.swing.JButton registerBtn;
     private javax.swing.JTextField usernameFld;
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration                   
+
+    private boolean userExists(String username, String password){
+        ArrayList<User> userList = frame.main.sqlite.getUsers();
+        int size = userList.size();
+        for(int i = 0; i < size; i++){
+            if (userList.get(i).getUsername().toLowerCase().equals(username.toLowerCase())){
+                    //JOptionPane.showMessageDialog(null, "User was found in database", "Incorrect Credentials");
+                if (userList.get(i).getPassword().equals(password)){ //add cryptography function
+              
+                    return true;
+                }
+            }
+                
+            
+        }
+        return false;
+    }
 }
