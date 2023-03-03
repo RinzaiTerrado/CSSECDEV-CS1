@@ -2,12 +2,16 @@
 package View;
 
 import Model.PasswordHash;
+import Model.User;
+import java.awt.Color;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.border.LineBorder;
 
 public class Register extends javax.swing.JPanel {
 
@@ -15,6 +19,7 @@ public class Register extends javax.swing.JPanel {
     
     public Register() {
         initComponents();
+        // MP NUMBER 4 - masked password, jtextfield was changed to jpasswordfield
     }
 
     @SuppressWarnings("unchecked")
@@ -22,10 +27,10 @@ public class Register extends javax.swing.JPanel {
     private void initComponents() {
 
         registerBtn = new javax.swing.JButton();
-        passwordFld = new javax.swing.JTextField();
+        passwordFld = new javax.swing.JPasswordField();
         usernameFld = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        confpassFld = new javax.swing.JTextField();
+        confpassFld = new javax.swing.JPasswordField();
         backBtn = new javax.swing.JButton();
 
         registerBtn.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
@@ -38,8 +43,13 @@ public class Register extends javax.swing.JPanel {
 
         passwordFld.setBackground(new java.awt.Color(240, 240, 240));
         passwordFld.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        passwordFld.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        passwordFld.setHorizontalAlignment(javax.swing.JPasswordField.CENTER);
         passwordFld.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true), "PASSWORD", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        passwordFld.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                passwordFldKeyTyped(evt);
+            }
+        });
 
         usernameFld.setBackground(new java.awt.Color(240, 240, 240));
         usernameFld.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -53,7 +63,7 @@ public class Register extends javax.swing.JPanel {
 
         confpassFld.setBackground(new java.awt.Color(240, 240, 240));
         confpassFld.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        confpassFld.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        confpassFld.setHorizontalAlignment(javax.swing.JPasswordField.CENTER);
         confpassFld.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true), "CONFIRM PASSWORD", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
 
         backBtn.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -109,28 +119,56 @@ public class Register extends javax.swing.JPanel {
         String pass = passwordFld.getText();
         String confpass = confpassFld.getText();
         
-        if (validRegister(user, pass, confpass)) {
-            try {
-                // MP NUMBER 18 - cryptographic technique
-                String passHash = PasswordHash.createHash(pass);
-                frame.registerAction(user, passHash, confpass); // confpass not used in registerAction()
-                frame.loginNav();
-            } catch(Exception ex) {
-                System.out.println("ERROR: " + ex);
+        
+        if(user.isBlank() || pass.isBlank() || confpass.isBlank()){
+            JOptionPane.showMessageDialog(new JFrame(), "One or more fields are empty", "Invalid Register", JOptionPane.ERROR_MESSAGE);
+        } else {
+            if (validRegister(user, pass, confpass)) {
+                if(!userExists(user)){
+                    try {
+                        // MP NUMBER 18 - cryptographic technique
+                        String passHash = PasswordHash.createHash(pass);
+                        //MP NUMBER 8 - Clear fields
+                        clearFields();
+                        frame.registerAction(user, passHash, confpass); // confpass not used in registerAction()
+                        frame.loginNav();
+                    } catch(Exception ex) {
+                        System.out.println("ERROR: " + ex);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(new JFrame(), "Invalid details", "Invalid Register", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
+        
     }//GEN-LAST:event_registerBtnActionPerformed
 
     private void backBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBtnActionPerformed
+        //MP NUMBER 8 - Clear fields
+        clearFields();
         frame.loginNav();
     }//GEN-LAST:event_backBtnActionPerformed
+
+    private void passwordFldKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_passwordFldKeyTyped
+        // TODO add your handling code here:
+        // MP NUMBER 7 - Password Strength, based on length since Cases/SpecialChars/Numbers are mandatory
+        //red border
+        String pass = passwordFld.getText();
+        if(pass.length() < 10){
+            passwordFld.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 0, 0), 2, true), "PASSWORD", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        } else if (pass.length() < 15){ //yellow
+            passwordFld.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(255, 255, 0), 2, true), "PASSWORD", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        } else if (pass.length() > 15) {//green
+            passwordFld.setBorder(javax.swing.BorderFactory.createTitledBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 255, 0), 2, true), "PASSWORD", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 12))); // NOI18N
+        }
+    }//GEN-LAST:event_passwordFldKeyTyped
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backBtn;
-    private javax.swing.JTextField confpassFld;
+    private javax.swing.JPasswordField confpassFld;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JTextField passwordFld;
+    private javax.swing.JPasswordField passwordFld;
     private javax.swing.JButton registerBtn;
     private javax.swing.JTextField usernameFld;
     // End of variables declaration//GEN-END:variables
@@ -144,6 +182,15 @@ public class Register extends javax.swing.JPanel {
      */
     private static boolean validRegister(String user, String pass, String confpass){
         boolean validRegister = true;
+        
+        
+        // MP NUMBER 22 - check empty fields
+        if (user.isBlank() || pass.isBlank() || confpass.isBlank()) {
+            String errorMessage = "One or more of the fields are empty. Try again.";
+            JOptionPane.showMessageDialog(new JFrame(), errorMessage, "Invalid Registration Details", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
         // MP NUMBER 10 - password and confirm password match
         if (!pass.equals(confpass)) {
             String errorMessage = "Those passwords don't match. Try again.";
@@ -215,5 +262,24 @@ public class Register extends javax.swing.JPanel {
                 isValid = false;
             }
             return isValid; 
+    }
+    
+    private boolean userExists(String username){
+        // MP NUMBER 13 - Checks if user exists in Database
+        ArrayList<User> userList = frame.main.sqlite.getUsers();
+        int size = userList.size();
+        for(int i = 0; i < size; i++){
+            if (userList.get(i).getUsername().equalsIgnoreCase(username)){ //case insensitive
+                    //JOptionPane.showMessageDialog(null, "User was found in database", "Incorrect Credentials");
+                return true;
+            }
+        }
+        return false;
+    }
+    private void clearFields(){
+        // MP NUMBER 8 - Clears fields
+        usernameFld.setText("");
+        passwordFld.setText("");
+        confpassFld.setText("");
     }
 }

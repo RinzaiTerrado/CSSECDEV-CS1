@@ -236,15 +236,37 @@ public class Frame extends javax.swing.JFrame {
         frameView.show(Container, "loginPnl");
         
         Content.setLayout(contentView);
+        Content.add(clientHomePnl, "clientHomePnl");
         Content.add(adminHomePnl, "adminHomePnl");
         Content.add(managerHomePnl, "managerHomePnl");
         Content.add(staffHomePnl, "staffHomePnl");
-        Content.add(clientHomePnl, "clientHomePnl");
+        
+       
         
         this.setVisible(true);
     }
     
-    public void mainNav(){
+    public void mainNav(int userType){
+        // MP NUMBER 14 - gets user type and disables dependent on number
+        if(userType < 5){
+            adminBtn.setEnabled(false);
+        }
+        else {
+            adminBtn.setEnabled(true);
+        }
+        if(userType < 4) {
+            managerBtn.setEnabled(false);
+        }
+        else {
+            managerBtn.setEnabled(true);
+        }
+        if(userType < 3){
+            staffBtn.setEnabled(false);
+        }
+        else {
+            staffBtn.setEnabled(true);
+        }
+                
         frameView.show(Container, "homePnl");
     }
     
