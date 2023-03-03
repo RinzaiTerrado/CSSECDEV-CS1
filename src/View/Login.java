@@ -3,6 +3,7 @@ import Model.User;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import Model.PasswordHash;
 
 public class Login extends javax.swing.JPanel {
 
@@ -115,7 +116,7 @@ public class Login extends javax.swing.JPanel {
         boolean isValidLogin = false;
         // check username
         // MP NUMBER 21 - check empty fields
-        if (user.isEmpty() || pass.isEmpty()) {
+        if (user.isBlank() || pass.isBlank()) {
             String errorMessage = "One of the fields are empty. Try again.";
             JOptionPane.showMessageDialog(new JFrame(), errorMessage, "Invalid Login", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -130,8 +131,13 @@ public class Login extends javax.swing.JPanel {
             // MP NUMBER 1 - check if username exist in database
             if (user.equalsIgnoreCase(userDB.getUsername())) {
                 // MP NUMBER 2 - check if password exist in database (given username exists)
-                if (pass.equals(userDB.getPassword())) {
-                    isValidLogin = true;
+                try {
+                    // MP NUMBER 18 - cryptographic technique
+                    if (PasswordHash.validatePassword(pass, userDB.getPassword())) {
+                        isValidLogin = true;
+                    }
+                } catch(Exception ex) {
+                    System.out.println("ERROR: " + ex);
                 }
             }
         }
