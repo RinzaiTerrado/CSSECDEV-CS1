@@ -10,6 +10,7 @@ import Model.User;
 import java.util.ArrayList;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -53,6 +54,7 @@ public class MgmtUser extends javax.swing.JPanel {
                 users.get(nCtr).getRole(), 
                 users.get(nCtr).getLocked()});
         }
+        
     }
 
     public void designer(JTextField component, String text){
@@ -212,10 +214,25 @@ public class MgmtUser extends javax.swing.JPanel {
                 state = "unlock";
             }
             
+            if ((int) tableModel.getValueAt(table.getSelectedRow(), 2) == 5) {
+                    JOptionPane.showMessageDialog(new JFrame(), "Admin cannot be locked out", "Invalid Account Lock", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
             int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to " + state + " " + tableModel.getValueAt(table.getSelectedRow(), 0) + "?", "DELETE USER", JOptionPane.YES_NO_OPTION);
             
             if (result == JOptionPane.YES_OPTION) {
                 System.out.println(tableModel.getValueAt(table.getSelectedRow(), 0));
+                // --- MP2 Disabled user-state ---
+                if(state.equals("unlock")){
+                    // set locked to 0 or 1 in UI
+                    tableModel.setValueAt("0", table.getSelectedRow(), 3);
+                    // set locked to 0 or 1 in sqlite db
+                    sqlite.lockUser((String) tableModel.getValueAt(table.getSelectedRow(), 0));
+                }
+                else {
+                    tableModel.setValueAt("1", table.getSelectedRow(), 3);
+                    sqlite.unlockUser((String) tableModel.getValueAt(table.getSelectedRow(), 0));
+                }
             }
         }
     }//GEN-LAST:event_lockBtnActionPerformed

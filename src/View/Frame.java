@@ -248,23 +248,21 @@ public class Frame extends javax.swing.JFrame {
     
     public void mainNav(int userType){
         // MP NUMBER 14 - gets user type and disables dependent on number
-        if(userType < 5){
-            adminBtn.setEnabled(false);
-        }
-        else {
+        adminBtn.setEnabled(false);
+        managerBtn.setEnabled(false);
+        staffBtn.setEnabled(false);
+        clientBtn.setEnabled(false);
+        if(userType == 5){
             adminBtn.setEnabled(true);
         }
-        if(userType < 4) {
-            managerBtn.setEnabled(false);
-        }
-        else {
+        else if(userType == 4) {
             managerBtn.setEnabled(true);
         }
-        if(userType < 3){
-            staffBtn.setEnabled(false);
+        else if(userType == 3){
+            staffBtn.setEnabled(true);
         }
         else {
-            staffBtn.setEnabled(true);
+            clientBtn.setEnabled(true);
         }
                 
         frameView.show(Container, "homePnl");

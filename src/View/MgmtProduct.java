@@ -27,7 +27,9 @@ public class MgmtProduct extends javax.swing.JPanel {
         this.sqlite = sqlite;
         tableModel = (DefaultTableModel)table.getModel();
         table.getTableHeader().setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14));
-
+        //this.sqlite.getUsers().get(currentUser);
+        
+        
 //        UNCOMMENT TO DISABLE BUTTONS
 //        purchaseBtn.setVisible(false);
 //        addBtn.setVisible(false);

@@ -303,6 +303,30 @@ public class SQLite {
         }
     }
     
+    public void lockUser(String username) {
+        String sql = "UPDATE users SET locked = 0 WHERE username = '" + username + "';";
+        
+        try (Connection conn = DriverManager.getConnection(driverURL);
+            Statement stmt = conn.createStatement()){
+            stmt.execute(sql);
+            
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+    }
+    
+    public void unlockUser(String username) {
+        String sql = "UPDATE users SET locked = 1 WHERE username = '" + username + "';";
+        
+        try (Connection conn = DriverManager.getConnection(driverURL);
+            Statement stmt = conn.createStatement()){
+            stmt.execute(sql);
+            
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+    }
+    
     public Product getProduct(String name){
         String sql = "SELECT name, stock, price FROM product WHERE name='" + name + "';";
         Product product = null;

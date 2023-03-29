@@ -114,7 +114,7 @@ public class Login extends javax.swing.JPanel {
             // MP NUMBER 17 - lockout
             loginCounter++;
             if(loginCounter > 5){
-                JOptionPane.showMessageDialog(new JFrame(), "login attempts failed for more than 5 times, you will be locked for 5 seconds", "Invalid Login", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(new JFrame(), "Login attempts failed 5 times, login will be disabled for 5 seconds and account will be locked. Please contact your Administrator to re-enable the account.", "Invalid Login", JOptionPane.ERROR_MESSAGE);
                 loginBtn.setEnabled(false);
                 try {
                     Thread.sleep(5000);
@@ -122,6 +122,7 @@ public class Login extends javax.swing.JPanel {
                  } catch (InterruptedException ie) {
                  }
                 loginBtn.setEnabled(true);
+                // MP2 Disabled user-type
                 
             }
         }
@@ -169,6 +170,12 @@ public class Login extends javax.swing.JPanel {
             // MP NUMBER 23 - check username (case-insensitive) 
             // MP NUMBER 1 - check if username exist in database
             if (user.equalsIgnoreCase(userDB.getUsername())) {
+                // --- MP2 Disabled User-State ---
+                if (userDB.getLocked() == 1) {
+                    String errorMessage = "Your account is disabled. Please communicate with the Admin in-person in order to re-enable the account.";
+                    JOptionPane.showMessageDialog(new JFrame(), errorMessage, "Account Disabled", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
                 // MP NUMBER 2 - check if password exist in database (given username exists)
                 try {
                     // MP NUMBER 18 - cryptographic technique
@@ -177,7 +184,11 @@ public class Login extends javax.swing.JPanel {
                         isValidLogin = true;
                     }
                 } catch(Exception ex) {
-                    System.out.println("ERROR: " + ex);
+                    // --- MP2 Fix default users not being able to login bc of hash ---
+                    if (pass.equals(userDB.getPassword())) {
+                        userType = userDB.getRole();
+                        isValidLogin = true;
+                    }
                 }
             }
         }
