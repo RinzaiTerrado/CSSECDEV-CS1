@@ -193,6 +193,8 @@ public class MgmtUser extends javax.swing.JPanel {
             if(result != null){
                 System.out.println(tableModel.getValueAt(table.getSelectedRow(), 0));
                 System.out.println(result.charAt(0));
+                sqlite.editUserRole(tableModel.getValueAt(table.getSelectedRow(), 0).toString(), result.charAt(0));
+                init();
             }
         }
     }//GEN-LAST:event_editRoleBtnActionPerformed
@@ -203,6 +205,8 @@ public class MgmtUser extends javax.swing.JPanel {
             
             if (result == JOptionPane.YES_OPTION) {
                 System.out.println(tableModel.getValueAt(table.getSelectedRow(), 0));
+                sqlite.removeUser(tableModel.getValueAt(table.getSelectedRow(), 0).toString());
+                init();
             }
         }
     }//GEN-LAST:event_deleteBtnActionPerformed
