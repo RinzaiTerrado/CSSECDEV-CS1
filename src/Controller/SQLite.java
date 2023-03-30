@@ -303,6 +303,7 @@ public class SQLite {
         }
     }
     
+    
     public void lockUser(String username) {
         String sql = "UPDATE users SET locked = 0 WHERE username = '" + username + "';";
         
@@ -327,6 +328,20 @@ public class SQLite {
         }
     }
     
+    public void editUserRole(String username, char role) {
+        String sql = "UPDATE users SET role ='" + role +"' WHERE username='" + username + "';";
+                System.out.println(sql);
+                System.out.println(role);
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+            Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+            System.out.println("User " + username + " has been updated.");
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+    }
+    
     public Product getProduct(String name){
         String sql = "SELECT name, stock, price FROM product WHERE name='" + name + "';";
         Product product = null;
@@ -340,5 +355,29 @@ public class SQLite {
             System.out.print(ex);
         }
         return product;
+    }
+    
+    public void editProduct(String name, String stock, String price) {
+        String sql = "UPDATE product SET name ='" + name +"',stock ='" + stock +"',price ='" + price +"' WHERE name='" + name + "';";
+                System.out.println(sql);
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+            Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+            System.out.println("Product " + name + " has been updated.");
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+    }
+    public void removeProduct(String name) {
+        String sql = "DELETE FROM product WHERE name='" + name + "';";
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+            Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+            System.out.println("Product " + name + " has been deleted.");
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
     }
 }
