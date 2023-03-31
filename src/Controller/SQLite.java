@@ -218,6 +218,26 @@ public class SQLite {
         }
         return histories;
     }
+    public ArrayList<History> getUserHistory(String username){
+        String sql = "SELECT id, username, name, stock, timestamp FROM history WHERE username = '" + username + "' ";
+        ArrayList<History> histories = new ArrayList<History>();
+        
+        try (Connection conn = DriverManager.getConnection(driverURL);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql)){
+            
+            while (rs.next()) {
+                histories.add(new History(rs.getInt("id"),
+                                   rs.getString("username"),
+                                   rs.getString("name"),
+                                   rs.getInt("stock"),
+                                   rs.getString("timestamp")));
+            }
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+        return histories;
+    }
     
     public ArrayList<Logs> getLogs(){
         String sql = "SELECT id, event, username, desc, timestamp FROM logs";
@@ -278,7 +298,24 @@ public class SQLite {
         } catch (Exception ex) {}
         return users;
     }
-    
+        public User getUser(String username){
+        String sql = "SELECT id, username, password, role, locked FROM users WHERE username='" + username + "'";
+        User users = null;
+        
+        try (Connection conn = DriverManager.getConnection(driverURL);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql)){
+            
+            while (rs.next()) {
+                users = new User(rs.getInt("id"),
+                                   rs.getString("username"),
+                                   rs.getString("password"),
+                                   rs.getInt("role"),
+                                   rs.getInt("locked"));
+            }
+        } catch (Exception ex) {}
+        return users;
+    }
     public void addUser(String username, String password, int role) {
         String sql = "INSERT INTO users(username,password,role) VALUES('" + username + "','" + password + "','" + role + "')";
         
