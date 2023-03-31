@@ -109,7 +109,8 @@ public class Login extends javax.swing.JPanel {
             loginCounter = 0;
             // MP NUMBER 9 - Clears Fields
             clearFields();
-            frame.mainNav(userType);
+            User usertoken = frame.main.sqlite.getUser(user.toLowerCase());
+            frame.mainNav(usertoken);
         } else {
             // MP NUMBER 17 - lockout
             loginCounter++;
