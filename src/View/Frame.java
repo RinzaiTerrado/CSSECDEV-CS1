@@ -6,6 +6,9 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import javax.swing.WindowConstants;
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class Frame extends javax.swing.JFrame {
     //int id, String username, String password, int role, int locked
@@ -202,6 +205,7 @@ public class Frame extends javax.swing.JFrame {
     }                                         
 
     private void logoutBtnActionPerformed(java.awt.event.ActionEvent evt) {                                          
+        userToken = new User(0,"dummy", "", 0, 0);
         frameView.show(Container, "loginPnl");
     }                                         
 
@@ -252,6 +256,7 @@ public class Frame extends javax.swing.JFrame {
     public void mainNav(User userToken){
         this.userToken = userToken;
         init(this.main);
+        session();
         
         System.out.println(userToken.getUsername() + " role " + userToken.getRole());
         System.out.println(this.userToken.getId() == 5);
@@ -311,6 +316,30 @@ public class Frame extends javax.swing.JFrame {
     
     public void registerAction(String username, String password, String confpass){
         main.sqlite.addUser(username, password);
+    }
+    private void session() {
+            Thread t1 = new Thread(new TimerClass());
+            t1.start();
+            
+            
+    }
+    public class TimerClass implements Runnable {
+    public void run(){
+        System.out.println("Session is running");
+        sessiontask(5);
+       } 
+    }
+    public void sessiontask(int min){
+            try {
+                
+                Thread.sleep(min * 1000 * 60);
+                System.out.println("Session Expired");
+                userToken = new User(0,"dummy", "", 0, 0);
+                frameView.show(Container, "loginPnl");
+            }
+            catch (InterruptedException e) {
+                System.out.println("interrupted");
+            }
     }
 
     // Variables declaration - do not modify                     
