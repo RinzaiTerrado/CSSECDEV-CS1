@@ -8,6 +8,7 @@ package View;
 import Controller.SQLite;
 import Model.Product;
 import java.util.ArrayList;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -208,9 +209,14 @@ public class MgmtProduct extends javax.swing.JPanel {
         int result = JOptionPane.showConfirmDialog(null, message, "ADD PRODUCT", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
 
         if (result == JOptionPane.OK_OPTION) {
-            System.out.println(nameFld.getText());
-            System.out.println(stockFld.getText());
-            System.out.println(priceFld.getText());
+            if (isValidData(nameFld.getText()) || isValidData(stockFld.getText()) || isValidData(stockFld.getText())) {
+                    System.out.println(nameFld.getText());
+                    System.out.println(stockFld.getText());
+                    System.out.println(priceFld.getText());
+                    sqlite.addProduct(nameFld.getText(), Integer.parseInt(stockFld.getText()), Double.parseDouble(priceFld.getText()));
+                    init();
+                }
+            else JOptionPane.showMessageDialog(new JFrame(), "Invalid input in one of the fields. Try again.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_addBtnActionPerformed
 
@@ -231,15 +237,34 @@ public class MgmtProduct extends javax.swing.JPanel {
             int result = JOptionPane.showConfirmDialog(null, message, "EDIT PRODUCT", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
 
             if (result == JOptionPane.OK_OPTION) {
-                System.out.println(nameFld.getText());
-                System.out.println(stockFld.getText());
-                System.out.println(priceFld.getText());
-                sqlite.editProduct(nameFld.getText(), stockFld.getText(), priceFld.getText());
-                init();
+                if (isValidData(nameFld.getText()) || isValidData(stockFld.getText()) || isValidData(stockFld.getText())) {
+                    System.out.println(nameFld.getText());
+                    System.out.println(stockFld.getText());
+                    System.out.println(priceFld.getText());
+                    sqlite.editProduct(nameFld.getText(), stockFld.getText(), priceFld.getText());
+                    init();
+                }
+                else JOptionPane.showMessageDialog(new JFrame(), "Invalid input in one of the fields. Try again.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
             }
         }
     }//GEN-LAST:event_editBtnActionPerformed
 
+    private boolean isValidData(String str) {
+        /* 
+            Should be applied to all input data, at minimum.
+            • Define the allowed set of characters to be accepted.
+            • Defines a minimum and maximum length for the data (e.g.
+            {1,25}).
+            • Ensure that any input validation performed on the client is
+            also performed on the server.
+        */
+        // alphanumeric + space only; data length {1,25}
+        if (str == null || !str.matches("[a-zA-Z0-9\\s]{1,25}")) {
+            return false;
+        }
+        return true;
+    }
+    
     private void deleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteBtnActionPerformed
         if(table.getSelectedRow() >= 0){
             int result = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete " + tableModel.getValueAt(table.getSelectedRow(), 0) + "?", "DELETE PRODUCT", JOptionPane.YES_NO_OPTION);
