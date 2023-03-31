@@ -9,6 +9,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class SQLite {
@@ -185,7 +186,8 @@ public class SQLite {
         try (Connection conn = DriverManager.getConnection(driverURL);
             Statement stmt = conn.createStatement()){
             stmt.execute(sql);
-            
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            addLogs("NOTICE", username, "User creation successful", timestamp.toString());
 //      PREPARED STATEMENT EXAMPLE
 //      String sql = "INSERT INTO users(username,password) VALUES(?,?)";
 //      PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -322,6 +324,8 @@ public class SQLite {
         try (Connection conn = DriverManager.getConnection(driverURL);
             Statement stmt = conn.createStatement()){
             stmt.execute(sql);
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            addLogs("NOTICE", username, "User creation successful", timestamp.toString());
             
         } catch (Exception ex) {
             System.out.print(ex);
@@ -334,6 +338,8 @@ public class SQLite {
         try (Connection conn = DriverManager.getConnection(driverURL);
             Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            addLogs("NOTICE", username, "User deletion successful", timestamp.toString());
             System.out.println("User " + username + " has been deleted.");
         } catch (Exception ex) {
             System.out.print(ex);
@@ -347,6 +353,8 @@ public class SQLite {
         try (Connection conn = DriverManager.getConnection(driverURL);
             Statement stmt = conn.createStatement()){
             stmt.execute(sql);
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            addLogs("NOTICE", username, "User locking successful", timestamp.toString());
             
         } catch (Exception ex) {
             System.out.print(ex);
@@ -359,6 +367,8 @@ public class SQLite {
         try (Connection conn = DriverManager.getConnection(driverURL);
             Statement stmt = conn.createStatement()){
             stmt.execute(sql);
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            addLogs("NOTICE", username, "User unlocking successful", timestamp.toString());
             
         } catch (Exception ex) {
             System.out.print(ex);
@@ -374,6 +384,8 @@ public class SQLite {
             Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
             System.out.println("User " + username + " has been updated.");
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            addLogs("NOTICE", username, "User editing successful", timestamp.toString());
         } catch (Exception ex) {
             System.out.print(ex);
         }
@@ -387,6 +399,8 @@ public class SQLite {
             Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
             System.out.println("User " + username + " has been updated.");
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            addLogs("NOTICE", username, "User password change successful", timestamp.toString());
         } catch (Exception ex) {
             System.out.print(ex);
         }
@@ -414,6 +428,8 @@ public class SQLite {
             Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
             System.out.println("Product " + name + " has been updated.");
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            addLogs("NOTICE", name, "Product editing successful", timestamp.toString());
         } catch (Exception ex) {
             System.out.print(ex);
         }
@@ -427,6 +443,8 @@ public class SQLite {
             Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
             System.out.println("Product " + name + " has been updated.");
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            addLogs("NOTICE", name, "Product purchased successfully", timestamp.toString());
         } catch (Exception ex) {
             System.out.print(ex);
         }
@@ -439,6 +457,8 @@ public class SQLite {
             Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
             System.out.println("Product " + name + " has been deleted.");
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            addLogs("NOTICE", name, "Product removed successfully", timestamp.toString());
         } catch (Exception ex) {
             System.out.print(ex);
         }
