@@ -51,7 +51,7 @@ public class MgmtHistory extends javax.swing.JPanel {
 //      LOAD CONTENTS
         //if user is client
         ArrayList<History> history = null;
-        if(userToken.getRole() == 3){
+        if(userToken.getRole() == 2){
          history = sqlite.getUserHistory(userToken.getUsername());
         }  else {
           history = sqlite.getHistory();
