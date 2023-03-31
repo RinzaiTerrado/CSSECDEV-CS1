@@ -6,7 +6,9 @@
 package View;
 
 import Controller.SQLite;
+import Model.History;
 import Model.Product;
+import Model.User;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -22,9 +24,11 @@ public class MgmtProduct extends javax.swing.JPanel {
 
     public SQLite sqlite;
     public DefaultTableModel tableModel;
+    public User userToken = null;
     
-    public MgmtProduct(SQLite sqlite) {
+    public MgmtProduct(SQLite sqlite, User userToken) {
         initComponents();
+        this.userToken = userToken;
         this.sqlite = sqlite;
         tableModel = (DefaultTableModel)table.getModel();
         table.getTableHeader().setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 14));
@@ -46,6 +50,16 @@ public class MgmtProduct extends javax.swing.JPanel {
         
 //      LOAD CONTENTS
         ArrayList<Product> products = sqlite.getProduct();
+        
+        if(userToken.getRole() == 2){ // client
+            // purchaseBtn.setVisible(false);
+            addBtn.setVisible(false);
+            editBtn.setVisible(false);
+            deleteBtn.setVisible(false);
+        } else { // manager, staff
+            purchaseBtn.setVisible(false);
+        }
+        
         for(int nCtr = 0; nCtr < products.size(); nCtr++){
             tableModel.addRow(new Object[]{
                 products.get(nCtr).getName(), 
@@ -184,11 +198,16 @@ public class MgmtProduct extends javax.swing.JPanel {
             Object[] message = {
                 "How many " + tableModel.getValueAt(table.getSelectedRow(), 0) + " do you want to purchase?", stockFld
             };
-
+            
+            
             int result = JOptionPane.showConfirmDialog(null, message, "PURCHASE PRODUCT", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
 
             if (result == JOptionPane.OK_OPTION) {
+                History h = new History(userToken.getUsername(), (String) tableModel.getValueAt(table.getSelectedRow(), 0), Integer.parseInt(stockFld.getText()));
+                sqlite.purchaseProduct((String) tableModel.getValueAt(table.getSelectedRow(), 0), stockFld.getText());
+                init();
                 System.out.println(stockFld.getText());
+                sqlite.addHistory(h.getUsername(), h.getName(), h.getStock(), h.getTimestamp().toString());
             }
         }
     }//GEN-LAST:event_purchaseBtnActionPerformed

@@ -35,7 +35,7 @@ public class StaffHome extends javax.swing.JPanel {
     public void init(SQLite sqlite, User userToken){
         mgmtHistory = new MgmtHistory(sqlite, userToken);
         mgmtLogs = new MgmtLogs(sqlite);
-        mgmtProduct = new MgmtProduct(sqlite);
+        mgmtProduct = new MgmtProduct(sqlite, userToken);
         mgmtUser = new MgmtUser(sqlite);
     
         Content.setLayout(contentView);

@@ -406,6 +406,20 @@ public class SQLite {
             System.out.print(ex);
         }
     }
+    
+    public void purchaseProduct(String name, String amount) {
+        String sql = "UPDATE product SET stock = stock - " + amount + " WHERE name='" + name + "';";
+                System.out.println(sql);
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+            Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+            System.out.println("Product " + name + " has been updated.");
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+    }
+    
     public void removeProduct(String name) {
         String sql = "DELETE FROM product WHERE name='" + name + "';";
 
