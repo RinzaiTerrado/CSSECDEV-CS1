@@ -1,19 +1,20 @@
 package View;
 
 import Controller.Main;
+import Model.User;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
 import javax.swing.WindowConstants;
 
 public class Frame extends javax.swing.JFrame {
-
+    public User userToken = null;
     public Frame() {
         initComponents();
     }
 
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
         Container = new javax.swing.JPanel();
@@ -177,31 +178,31 @@ public class Frame extends javax.swing.JFrame {
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>                        
 
-    private void adminBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminBtnActionPerformed
+    private void adminBtnActionPerformed(java.awt.event.ActionEvent evt) {                                         
         adminHomePnl.showPnl("home");
         contentView.show(Content, "adminHomePnl");
-    }//GEN-LAST:event_adminBtnActionPerformed
+    }                                        
 
-    private void managerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_managerBtnActionPerformed
+    private void managerBtnActionPerformed(java.awt.event.ActionEvent evt) {                                           
         managerHomePnl.showPnl("home");
         contentView.show(Content, "managerHomePnl");
-    }//GEN-LAST:event_managerBtnActionPerformed
+    }                                          
 
-    private void staffBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_staffBtnActionPerformed
+    private void staffBtnActionPerformed(java.awt.event.ActionEvent evt) {                                         
         staffHomePnl.showPnl("home");
         contentView.show(Content, "staffHomePnl");
-    }//GEN-LAST:event_staffBtnActionPerformed
+    }                                        
 
-    private void clientBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clientBtnActionPerformed
+    private void clientBtnActionPerformed(java.awt.event.ActionEvent evt) {                                          
         clientHomePnl.showPnl("home");
         contentView.show(Content, "clientHomePnl");
-    }//GEN-LAST:event_clientBtnActionPerformed
+    }                                         
 
-    private void logoutBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutBtnActionPerformed
+    private void logoutBtnActionPerformed(java.awt.event.ActionEvent evt) {                                          
         frameView.show(Container, "loginPnl");
-    }//GEN-LAST:event_logoutBtnActionPerformed
+    }                                         
 
     public Main main;
     public Login loginPnl = new Login();
@@ -224,10 +225,10 @@ public class Frame extends javax.swing.JFrame {
         loginPnl.frame = this;
         registerPnl.frame = this;
         
-        adminHomePnl.init(main.sqlite);
-        clientHomePnl.init(main.sqlite);
-        managerHomePnl.init(main.sqlite);
-        staffHomePnl.init(main.sqlite);
+        adminHomePnl.init(main.sqlite, userToken);
+        clientHomePnl.init(main.sqlite, userToken);
+        managerHomePnl.init(main.sqlite, userToken);
+        staffHomePnl.init(main.sqlite, userToken);
         
         Container.setLayout(frameView);
         Container.add(loginPnl, "loginPnl");
@@ -246,23 +247,28 @@ public class Frame extends javax.swing.JFrame {
         this.setVisible(true);
     }
     
-    public void mainNav(int userType){
+    public void mainNav(User userToken){
+        this.userToken = userToken;
+        init(this.main);
+        System.out.println(userToken.getUsername());
         // MP NUMBER 14 - gets user type and disables dependent on number
-        adminBtn.setEnabled(false);
-        managerBtn.setEnabled(false);
-        staffBtn.setEnabled(false);
-        clientBtn.setEnabled(false);
-        if(userType == 5){
-            adminBtn.setEnabled(true);
-        }
-        else if(userType == 4) {
-            managerBtn.setEnabled(true);
-        }
-        else if(userType == 3){
-            staffBtn.setEnabled(true);
+        if(this.userToken.getId() < 5){
+            adminBtn.setEnabled(false);
         }
         else {
-            clientBtn.setEnabled(true);
+            adminBtn.setEnabled(true);
+        }
+        if(this.userToken.getId() < 4) {
+            managerBtn.setEnabled(false);
+        }
+        else {
+            managerBtn.setEnabled(true);
+        }
+        if(this.userToken.getId() < 3){
+            staffBtn.setEnabled(false);
+        }
+        else {
+            staffBtn.setEnabled(true);
         }
                 
         frameView.show(Container, "homePnl");
@@ -280,7 +286,7 @@ public class Frame extends javax.swing.JFrame {
         main.sqlite.addUser(username, password);
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify                     
     private javax.swing.JPanel Container;
     private javax.swing.JPanel Content;
     private javax.swing.JPanel HomePnl;
@@ -291,5 +297,5 @@ public class Frame extends javax.swing.JFrame {
     private javax.swing.JButton logoutBtn;
     private javax.swing.JButton managerBtn;
     private javax.swing.JButton staffBtn;
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration                   
 }
