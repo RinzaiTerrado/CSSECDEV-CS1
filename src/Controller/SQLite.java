@@ -379,6 +379,18 @@ public class SQLite {
         }
     }
     
+    public void editUserPassword(String username, String password) {
+        String sql = "UPDATE users SET password ='" + password +"' WHERE username='" + username + "';";
+                System.out.println(sql);
+
+        try (Connection conn = DriverManager.getConnection(driverURL);
+            Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+            System.out.println("User " + username + " has been updated.");
+        } catch (Exception ex) {
+            System.out.print(ex);
+        }
+    }
     public Product getProduct(String name){
         String sql = "SELECT name, stock, price FROM product WHERE name='" + name + "';";
         Product product = null;
