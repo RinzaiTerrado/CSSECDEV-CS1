@@ -8,7 +8,8 @@ import java.awt.Dimension;
 import javax.swing.WindowConstants;
 
 public class Frame extends javax.swing.JFrame {
-    public User userToken = null;
+    //int id, String username, String password, int role, int locked
+    public User userToken = new User(0,"dummy", "", 0, 0);
     public Frame() {
         initComponents();
     }
@@ -237,10 +238,11 @@ public class Frame extends javax.swing.JFrame {
         frameView.show(Container, "loginPnl");
         
         Content.setLayout(contentView);
-        Content.add(clientHomePnl, "clientHomePnl");
         Content.add(adminHomePnl, "adminHomePnl");
         Content.add(managerHomePnl, "managerHomePnl");
         Content.add(staffHomePnl, "staffHomePnl");
+        Content.add(clientHomePnl, "clientHomePnl");
+                
         
        
         
@@ -250,25 +252,50 @@ public class Frame extends javax.swing.JFrame {
     public void mainNav(User userToken){
         this.userToken = userToken;
         init(this.main);
-        System.out.println(userToken.getUsername());
+        
+        System.out.println(userToken.getUsername() + " role " + userToken.getRole());
+        System.out.println(this.userToken.getId() == 5);
         // MP NUMBER 14 - gets user type and disables dependent on number
-        if(this.userToken.getId() < 5){
+        if(this.userToken.getRole() == 5){
+            System.out.println("admin button disabled");
+            adminBtn.setEnabled(true);
+            adminHomePnl.setVisible(true);
+            managerHomePnl.setVisible(false);
+            staffHomePnl.setVisible(false);
+            clientHomePnl.setVisible(false);
+        }
+        else {
             adminBtn.setEnabled(false);
         }
-        else {
-            adminBtn.setEnabled(true);
+        if(this.userToken.getRole() == 4) {
+            managerBtn.setEnabled(true);
+            adminHomePnl.setVisible(false);
+            managerHomePnl.setVisible(true);
+            staffHomePnl.setVisible(false);
+            clientHomePnl.setVisible(false);
         }
-        if(this.userToken.getId() < 4) {
+        else {
             managerBtn.setEnabled(false);
         }
-        else {
-            managerBtn.setEnabled(true);
+        if(this.userToken.getRole() == 3){
+            staffBtn.setEnabled(true);
+            adminHomePnl.setVisible(false);
+            managerHomePnl.setVisible(false);
+            staffHomePnl.setVisible(true);
+            clientHomePnl.setVisible(false);
         }
-        if(this.userToken.getId() < 3){
+        else {
             staffBtn.setEnabled(false);
         }
+        if(this.userToken.getRole() == 2){
+            clientBtn.setEnabled(true);
+            adminHomePnl.setVisible(false);
+            managerHomePnl.setVisible(false);
+            staffHomePnl.setVisible(false);
+            clientHomePnl.setVisible(true);
+        }
         else {
-            staffBtn.setEnabled(true);
+            clientBtn.setEnabled(false);
         }
                 
         frameView.show(Container, "homePnl");
